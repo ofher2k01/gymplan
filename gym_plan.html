@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>MI PLAN GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --card: #141414;
+  --card2: #1a1a1a;
+  --border: #222;
+  --accent: #c8f135;
+  --orange: #ff6b35;
+  --blue: #35d4f1;
+  --purple: #a78bfa;
+  --text: #f0f0f0;
+  --muted: #666;
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  padding-bottom: calc(70px + var(--safe-bottom));
+  overscroll-behavior: none;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+  background: rgba(14,14,14,0.97);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 10px 0 6px; gap: 3px; cursor: pointer;
+  transition: opacity 0.15s;
+  border: none; background: none; color: var(--muted);
+}
+.nav-btn.active { color: var(--accent); }
+.nav-btn svg { width: 22px; height: 22px; }
+.nav-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* PAGES */
+.page { display: none; animation: fadeIn 0.2s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HEADER */
+.page-header {
+  padding: 52px 20px 20px;
+  background: linear-gradient(180deg, #0f0f0f 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: blur(10px);
+}
+.page-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.page-title { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: 0.04em; line-height: 1; }
+
+/* HOME */
+.home-hero {
+  padding: 40px 20px 24px;
+  background: linear-gradient(135deg, #0f0f0f, #0a1200);
+  border-bottom: 1px solid var(--border);
+}
+.home-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.home-name { font-family: 'Bebas Neue', sans-serif; font-size: 56px; line-height: 0.9; letter-spacing: 0.02em; }
+.home-name span { color: var(--accent); }
+.home-sub { font-size: 13px; color: var(--muted); margin-top: 12px; font-weight: 300; line-height: 1.5; }
+
+.stats-scroll {
+  display: flex; gap: 8px; padding: 16px 20px;
+  overflow-x: auto; scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+}
+.stats-scroll::-webkit-scrollbar { display: none; }
+.stat-chip {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 16px; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.stat-chip-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent); line-height: 1; }
+.stat-chip-lbl { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+.section-pad { padding: 20px; }
+.sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.05em; color: var(--text); margin-bottom: 12px; }
+
+/* CARDS */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px; margin-bottom: 8px;
+}
+.card-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.card-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.card-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+.card-val.green { color: var(--accent); }
+.card-val.orange { color: var(--orange); }
+.card-val.blue { color: var(--blue); }
+.card-val.purple { color: var(--purple); }
+
+/* ALERT BOXES */
+.alert { border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; border-left: 3px solid; }
+.alert-warn { background: rgba(255,107,53,0.07); border-color: var(--orange); color: #ddb8a8; }
+.alert-good { background: rgba(200,241,53,0.06); border-color: var(--accent); color: #bdd98a; }
+.alert-info { background: rgba(53,212,241,0.06); border-color: var(--blue); color: #8eccd6; }
+.alert strong { color: inherit; font-weight: 600; }
+
+/* TODAY CARD */
+.today-card {
+  background: linear-gradient(135deg, #141414, #1a1f0a);
+  border: 1px solid rgba(200,241,53,0.2);
+  border-radius: 12px; padding: 18px; margin-bottom: 8px;
+}
+.today-day { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.today-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; }
+.today-focus { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* ROUTINE PAGE */
+.day-tabs {
+  display: flex; overflow-x: auto; scrollbar-width: none;
+  padding: 12px 20px; gap: 8px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 85px; z-index: 9; background: var(--bg);
+}
+.day-tabs::-webkit-scrollbar { display: none; }
+.day-tab {
+  flex-shrink: 0; font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 8px 14px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); color: var(--muted); background: var(--card);
+  transition: all 0.15s;
+}
+.day-tab.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+
+.routine-content { padding: 16px 20px; }
+.day-panel { display: none; }
+.day-panel.active { display: block; }
+
+.day-header-info { margin-bottom: 16px; }
+.day-big-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.04em; }
+.day-focus-text { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+.ex-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; margin-bottom: 6px;
+  border-left: 3px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+}
+.ex-card.star { border-left-color: var(--accent); }
+.ex-card.warn { border-left-color: var(--orange); }
+.ex-card.info { border-left-color: var(--blue); }
+.ex-card.removed { border-left-color: #333; opacity: 0.4; }
+.ex-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.ex-note { font-size: 11px; color: var(--muted); margin-top: 3px; font-style: italic; line-height: 1.4; }
+.ex-sets { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--blue); white-space: nowrap; padding-top: 2px; flex-shrink: 0; }
+
+.sub-section { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.05em; color: var(--orange); margin: 18px 0 10px; }
+
+/* NUTRITION PAGE */
+.macro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.macro-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; position: relative; overflow: hidden; }
+.macro-box::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.macro-box.kcal::after { background: var(--accent); }
+.macro-box.pro::after { background: var(--orange); }
+.macro-box.carb::after { background: var(--blue); }
+.macro-box.fat::after { background: var(--purple); }
+.macro-num { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; }
+.macro-box.kcal .macro-num { color: var(--accent); }
+.macro-box.pro .macro-num { color: var(--orange); }
+.macro-box.carb .macro-num { color: var(--blue); }
+.macro-box.fat .macro-num { color: var(--purple); }
+.macro-sub { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+.meal-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.meal-head { padding: 14px 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+.meal-time-badge { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+.meal-title-text { font-weight: 600; font-size: 15px; }
+.meal-kcal { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent); }
+.meal-body { padding: 0 16px 14px; font-size: 13px; color: #999; line-height: 1.5; }
+
+.special-day { background: rgba(255,107,53,0.05); border: 1px solid rgba(255,107,53,0.15); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+.special-day-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.05em; color: var(--orange); margin-bottom: 10px; }
+
+/* SCHEDULE PAGE */
+.schedule-day { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.schedule-head { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.sch-day-num { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--border); line-height: 1; min-width: 36px; }
+.sch-info { flex: 1; }
+.sch-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; }
+.sch-sub { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+.badge { font-family: 'DM Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+.b-g { background: rgba(200,241,53,0.1); color: var(--accent); border: 1px solid rgba(200,241,53,0.2); }
+.b-o { background: rgba(255,107,53,0.1); color: var(--orange); border: 1px solid rgba(255,107,53,0.2); }
+.b-b { background: rgba(53,212,241,0.1); color: var(--blue); border: 1px solid rgba(53,212,241,0.2); }
+.b-p { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+.b-muted { background: rgba(100,100,100,0.1); color: var(--muted); border: 1px solid var(--border); }
+
+.time-row { display: flex; gap: 0; border-top: 1px solid var(--border); }
+.time-block { flex: 1; padding: 10px 12px; border-right: 1px solid var(--border); }
+.time-block:last-child { border-right: none; }
+.time-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--accent); }
+.time-lbl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 1px; }
+
+/* TIPS */
+.tip-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 8px; display: flex; gap: 14px; align-items: flex-start; }
+.tip-icon { font-size: 24px; flex-shrink: 0; }
+.tip-title-t { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; margin-bottom: 4px; }
+.tip-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* PWA install banner */
+.install-banner {
+  background: rgba(200,241,53,0.08); border: 1px solid rgba(200,241,53,0.2);
+  border-radius: 10px; padding: 14px 16px; margin: 16px 20px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.install-banner-text { flex: 1; font-size: 13px; color: #bdd98a; line-height: 1.5; }
+.install-banner-text strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <div class="home-tag">Plan Personalizado · Impulso Gym GT</div>
+    <div class="home-name">MI<br><span>PLAN</span></div>
+    <div class="home-sub">68kg · 177cm · 25 años · Híbrido calistenia + pesas</div>
+  </div>
+
+  <div class="stats-scroll">
+    <div class="stat-chip"><div class="stat-chip-val">3,100</div><div class="stat-chip-lbl">Kcal/día</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">170g</div><div class="stat-chip-lbl">Proteína</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">5x</div><div class="stat-chip-lbl">Días gym</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">70lb</div><div class="stat-chip-lbl">Lastre fondos</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">5g</div><div class="stat-chip-lbl">Creatina</div></div>
+  </div>
+
+  <div class="install-banner">
+    <div>📱</div>
+    <div class="install-banner-text">
+      <strong>Guardar en tu celular</strong>
+      En Chrome: toca los 3 puntos → "Añadir a pantalla de inicio". En Safari: toca compartir → "En pantalla de inicio". Así la tienes como app sin internet.
+    </div>
+  </div>
+
+  <div class="section-pad">
+    <div class="sec-title">ENTRENAMIENTO HOY</div>
+    <div id="todayCard"></div>
+
+    <div class="sec-title" style="margin-top:20px;">REGLAS BASE</div>
+    <div class="alert alert-warn"><strong>Pull-over: ELIMINADO.</strong> Ya te lesionó una vez. Reemplazado por pulldown agarre neutro.</div>
+    <div class="alert alert-good"><strong>Meta:</strong> +0.5 a 1 kg por mes. Pesarte cada lunes en ayunas. Si no subes en 2 semanas, agrega 200 kcal.</div>
+    <div class="alert alert-info"><strong>Hombro derecho:</strong> Face pulls obligatorios cada día de gym. 5 min de rehab con banda antes de entrenar.</div>
+
+    <div class="sec-title" style="margin-top:20px;">TU SEMANA</div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">LUN</div><div style="background:rgba(200,241,53,0.15);border-radius:6px;padding:8px 0;font-size:10px;color:var(--accent);font-weight:600;">ESP</div></div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">MAR</div><div style="background:rgba(255,107,53,0.15);border-radius:6px;padding:8px 0;font-size:10px;color:var(--orange);font-weight:600;">PIE</div></div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">MIÉ</div><div style="background:rgba(200,241,53,0.15);border-radius:6px;padding:8px 0;font-size:10px;color:var(--accent);font-weight:600;">PEC</div></div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">JUE</div><div style="background:rgba(167,139,250,0.15);border-radius:6px;padding:8px 0;font-size:10px;color:var(--purple);font-weight:600;">RUN</div></div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">VIE</div><div style="background:rgba(53,212,241,0.15);border-radius:6px;padding:8px 0;font-size:10px;color:var(--blue);font-weight:600;">BRA</div></div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">SÁB</div><div style="background:#1a1a1a;border-radius:6px;padding:8px 0;font-size:10px;color:var(--muted);font-weight:600;">UNI</div></div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">DOM</div><div style="background:rgba(167,139,250,0.15);border-radius:6px;padding:8px 0;font-size:10px;color:var(--purple);font-weight:600;">MIX</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RUTINA PAGE -->
+<div class="page" id="page-rutina">
+  <div class="page-header">
+    <div class="page-eyebrow">Entrenamiento</div>
+    <div class="page-title">RUTINA</div>
+  </div>
+
+  <div class="day-tabs">
+    <div class="day-tab active" onclick="showDay(0)">LUN</div>
+    <div class="day-tab" onclick="showDay(1)">MAR</div>
+    <div class="day-tab" onclick="showDay(2)">MIÉ</div>
+    <div class="day-tab" onclick="showDay(3)">JUE</div>
+    <div class="day-tab" onclick="showDay(4)">VIE</div>
+    <div class="day-tab" onclick="showDay(5)">DOM</div>
+  </div>
+
+  <div class="routine-content">
+
+    <!-- LUNES -->
+    <div class="day-panel active" id="day-0">
+      <div class="day-header-info">
+        <div class="day-big-title">ESPALDA + BÍCEPS</div>
+        <div class="day-focus-text">Pull day · Dominadas con lastre · 4–6 PM</div>
+      </div>
+      <div class="alert alert-warn"><strong>Calentamiento hombro:</strong> Rotaciones con banda elástica antes de empezar. 3×15 cada dirección.</div>
+
+      <div class="sub-section">ESPALDA</div>
+      <div class="ex-card info"><div><div class="ex-name">Calentamiento — Dominadas sin lastre</div><div class="ex-note">Ya lo haces. 2-3 series de 8 reps para activar</div></div><div class="ex-sets">2×8</div></div>
+      <div class="ex-card star"><div><div class="ex-name">Dominadas con lastre (pronado)</div><div class="ex-note">Tu ejercicio estrella. Progresa 2.5 lbs cada 1-2 semanas</div></div><div class="ex-sets">5×5-8</div></div>
+      <div class="ex-card"><div><div class="ex-name">Remo barra o mancuerna</div><div class="ex-note">Codo pegado al cuerpo. Ya lo haces bien</div></div><div class="ex-sets">4×10</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Pulldown agarre neutro (en V)</div><div class="ex-note">REEMPLAZA el pull-over. Más seguro para hombro</div></div><div class="ex-sets">3×12</div></div>
+      <div class="ex-card star"><div><div class="ex-name">Face pulls con cuerda</div><div class="ex-note">NUEVO — rehab hombro + deltoides posterior. No saltárselo</div></div><div class="ex-sets">3×15-20</div></div>
+      <div class="ex-card removed"><div><div class="ex-name">Pull-over ❌</div><div class="ex-note">ELIMINADO — ya causó lesión</div></div><div class="ex-sets">—</div></div>
+
+      <div class="sub-section">BÍCEPS + ANTEBRAZO</div>
+      <div class="ex-card"><div><div class="ex-name">Curl en polea + Dropset</div><div class="ex-note">Ya lo haces bien. Dropset al final ✓</div></div><div class="ex-sets">3×10+DS</div></div>
+      <div class="ex-card"><div><div class="ex-name">Curl martillo mancuernas</div><div class="ex-note">Bíceps largo + braquial. Ya lo haces</div></div><div class="ex-sets">3×12</div></div>
+      <div class="ex-card info"><div><div class="ex-name">Antebrazo pronado + supino ("de gatito")</div><div class="ex-note">2 series rápidas al final. Siempre incluirlos</div></div><div class="ex-sets">2×15</div></div>
+    </div>
+
+    <!-- MARTES -->
+    <div class="day-panel" id="day-1">
+      <div class="day-header-info">
+        <div class="day-big-title">PIERNAS</div>
+        <div class="day-focus-text">Día de oficina · Sales 4 PM · Gym con hermana</div>
+      </div>
+      <div class="alert alert-warn"><strong>Espalda baja en sentadilla:</strong> Coloca un disco pequeño bajo los talones o usa Chuck Taylor. Torso vertical, no inclines hacia adelante.</div>
+      <div class="alert alert-info"><strong>Femoral y peso muerto:</strong> Son obligatorios para equilibrar cuádriceps. El peso muerto con mancuernas no duele la espalda — pruébalo.</div>
+
+      <div class="sub-section">CUÁDRICEPS</div>
+      <div class="ex-card star"><div><div class="ex-name">Sentadilla (calentamiento + trabajo)</div><div class="ex-note">Talones elevados. Peso moderado sin cinturón está bien. Ya lo haces</div></div><div class="ex-sets">4×8-10</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Prensa de pierna</div><div class="ex-note">NUEVO — más volumen sin estrés en espalda. Pies altos = más glúteo</div></div><div class="ex-sets">4×10-12</div></div>
+      <div class="ex-card"><div><div class="ex-name">Extensión cuádriceps (unilateral → bilateral)</div><div class="ex-note">Ya lo haces. Mantener esa progresión</div></div><div class="ex-sets">3×12-15</div></div>
+
+      <div class="sub-section">ISQUIOS + GLÚTEO</div>
+      <div class="ex-card star"><div><div class="ex-name">Peso muerto rumano con MANCUERNAS</div><div class="ex-note">NUEVO — con mancuernas no duele la espalda. Espalda neutra, caderas atrás</div></div><div class="ex-sets">4×10</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Curl femoral acostado</div><div class="ex-note">NUEVO — sin esto tus isquios están desbalanceados. Riesgo de rodilla</div></div><div class="ex-sets">3×12</div></div>
+
+      <div class="sub-section">COMPLEMENTOS</div>
+      <div class="ex-card"><div><div class="ex-name">Abductor + Aductor máquina</div><div class="ex-note">Ya lo haces. 3 series cada uno</div></div><div class="ex-sets">3×15</div></div>
+      <div class="ex-card"><div><div class="ex-name">Pantorrilla sentado o en máquina</div><div class="ex-note">Ya lo haces. Rango completo, pausa abajo</div></div><div class="ex-sets">4×15-20</div></div>
+
+      <div class="sub-section">CORE</div>
+      <div class="ex-card star"><div><div class="ex-name">Dragon flag</div><div class="ex-note">Ya lo haces — nivel avanzado. Mantenerlo</div></div><div class="ex-sets">3×máx</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Colgada con elevación de rodillas</div><div class="ex-note">NUEVO — usa la barra de dominadas. Flexión real del core</div></div><div class="ex-sets">3×12-15</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Plancha lateral</div><div class="ex-note">NUEVO — oblicuos. 30-45 seg cada lado</div></div><div class="ex-sets">3×40s</div></div>
+    </div>
+
+    <!-- MIÉRCOLES -->
+    <div class="day-panel" id="day-2">
+      <div class="day-header-info">
+        <div class="day-big-title">PECHO + HOMBRO + TRÍCEPS</div>
+        <div class="day-focus-text">Tu día más sólido · Pocos cambios</div>
+      </div>
+      <div class="alert alert-good">✅ Tu rutina de miércoles es la más completa. Solo ajustes menores.</div>
+
+      <div class="sub-section">CALENTAMIENTO</div>
+      <div class="ex-card star"><div><div class="ex-name">Manguito rotador (15-20 min)</div><div class="ex-note">Ya lo haces — NUNCA quitarlo. Rotaciones con banda + aproximaciones laterales en polea</div></div><div class="ex-sets">15-20 min</div></div>
+
+      <div class="sub-section">PECHO</div>
+      <div class="ex-card"><div><div class="ex-name">Aperturas en polea inclinado (con silla)</div><div class="ex-note">Ya lo haces con dropset al final — funciona, mantenlo ✓</div></div><div class="ex-sets">3×12+DS</div></div>
+      <div class="ex-card"><div><div class="ex-name">Pecho bajo en polea (abajo hacia arriba)</div><div class="ex-note">Ya sientes que funciona — confía en eso. Pecho inferior real ✓</div></div><div class="ex-sets">3×12-15</div></div>
+      <div class="ex-card star"><div><div class="ex-name">Fondos con lastre (hasta 70 lbs)</div><div class="ex-note">Tu mejor ejercicio push. Meta: 90 lbs en 3 meses</div></div><div class="ex-sets">4×8-10</div></div>
+
+      <div class="sub-section">HOMBRO</div>
+      <div class="ex-card"><div><div class="ex-name">Laterales mancuerna dropset (25→15→10 lbs)</div><div class="ex-note">Ya lo haces y funciona — mantener esta estructura ✓</div></div><div class="ex-sets">3 DS</div></div>
+      <div class="ex-card"><div><div class="ex-name">Press hombro máquina (hasta 90 lbs)</div><div class="ex-note">Progresa a 100-110 gradualmente. Máquina es más seguro que barra</div></div><div class="ex-sets">4×10</div></div>
+
+      <div class="sub-section">TRÍCEPS</div>
+      <div class="ex-card"><div><div class="ex-name">Extensiones barra V o araña/rompecráneos</div><div class="ex-note">Alterna semanas entre ambas variantes. Ya funciona ✓</div></div><div class="ex-sets">4×10-12</div></div>
+    </div>
+
+    <!-- JUEVES -->
+    <div class="day-panel" id="day-3">
+      <div class="day-header-info">
+        <div class="day-big-title">DESCANSO + CARDIO</div>
+        <div class="day-focus-text">Mejor día para correr · Sin gym</div>
+      </div>
+      <div class="alert alert-good">Ya tienes base de 6-7 km en carrera. Empiezas directo con 3-4 km, no desde cero.</div>
+      <div class="alert alert-warn"><strong>Regla ectomorfo:</strong> Agrega 250-300 kcal extra este día. Un banano + maní extra es suficiente para no perder músculo.</div>
+
+      <div class="sub-section">CARDIO</div>
+      <div class="ex-card star"><div><div class="ex-name">Correr 25-30 minutos</div><div class="ex-note">Ritmo conversacional — si no puedes hablar, vas muy rápido. ~3-4 km</div></div><div class="ex-sets">3-4 km</div></div>
+
+      <div class="sub-section">REHAB HOMBRO</div>
+      <div class="ex-card info"><div><div class="ex-name">Rotación externa con banda (hombro derecho)</div><div class="ex-note">10 min. Crucial para recuperación del manguito</div></div><div class="ex-sets">3×20</div></div>
+      <div class="ex-card info"><div><div class="ex-name">Movilidad cadera + tobillo</div><div class="ex-note">Ayuda con la sentadilla del martes. 10 min</div></div><div class="ex-sets">10 min</div></div>
+    </div>
+
+    <!-- VIERNES -->
+    <div class="day-panel" id="day-4">
+      <div class="day-header-info">
+        <div class="day-big-title">ESPALDA ALTA + BRAZOS</div>
+        <div class="day-focus-text">2do estímulo espalda · Bíceps · Tríceps completo</div>
+      </div>
+      <div class="alert alert-info">Tu viernes mixto anterior no tenía estructura. Ahora es un día de brazos + 2do estímulo de espalda — máximo crecimiento.</div>
+
+      <div class="sub-section">ESPALDA</div>
+      <div class="ex-card star"><div><div class="ex-name">Dominadas supinas con lastre</div><div class="ex-note">Agarre supino activa más bíceps + espalda baja</div></div><div class="ex-sets">4×6-8</div></div>
+      <div class="ex-card"><div><div class="ex-name">Remo en polea baja agarre neutro</div><div class="ex-note">Espalda media/baja. Alternativa al pull-over para ese estímulo</div></div><div class="ex-sets">4×10-12</div></div>
+
+      <div class="sub-section">BÍCEPS</div>
+      <div class="ex-card star"><div><div class="ex-name">Curl barra EZ</div><div class="ex-note">Menos estrés en muñeca que barra recta. Rango completo</div></div><div class="ex-sets">4×10</div></div>
+      <div class="ex-card"><div><div class="ex-name">Curl martillo mancuernas</div><div class="ex-note">Ya lo haces. Bíceps largo + braquial</div></div><div class="ex-sets">3×12</div></div>
+
+      <div class="sub-section">TRÍCEPS</div>
+      <div class="ex-card"><div><div class="ex-name">Extensiones tríceps en polea (cuerda)</div><div class="ex-note">Rango completo. Dropset al final</div></div><div class="ex-sets">4×12+DS</div></div>
+
+      <div class="sub-section">ANTEBRAZO</div>
+      <div class="ex-card info"><div><div class="ex-name">Antebrazo pronado + supino ("de gatito")</div><div class="ex-note">Siempre al final. 2-3 series rápidas</div></div><div class="ex-sets">3×15</div></div>
+    </div>
+
+    <!-- DOMINGO -->
+    <div class="day-panel" id="day-5">
+      <div class="day-header-info">
+        <div class="day-big-title">DOMINGO CON PAPÁ</div>
+        <div class="day-focus-text">Pierna ligera + Core completo · Sin hora fija</div>
+      </div>
+      <div class="alert alert-info">Reemplaza el pecho/hombro repetido. Ya los entrenaste el miércoles — este día los músculos no están recuperados para volver a estimularlos bien.</div>
+
+      <div class="sub-section">PIERNA LIGERA</div>
+      <div class="ex-card"><div><div class="ex-name">Prensa de pierna</div><div class="ex-note">60-70% intensidad. Sin ir al fallo</div></div><div class="ex-sets">3×15</div></div>
+      <div class="ex-card"><div><div class="ex-name">Extensión cuádriceps</div><div class="ex-note">Ligero, enfocado en contracción</div></div><div class="ex-sets">3×15</div></div>
+      <div class="ex-card"><div><div class="ex-name">Curl femoral</div><div class="ex-note">Complementa el martes</div></div><div class="ex-sets">3×15</div></div>
+      <div class="ex-card"><div><div class="ex-name">Pantorrilla</div></div><div class="ex-sets">3×20</div></div>
+
+      <div class="sub-section">CORE COMPLETO</div>
+      <div class="ex-card star"><div><div class="ex-name">Dragon flag</div><div class="ex-note">Ya lo dominas — mantenlo como ejercicio principal de core</div></div><div class="ex-sets">3×máx</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Ab wheel / rueda abdominal</div><div class="ex-note">NUEVO — complemento perfecto del dragon flag</div></div><div class="ex-sets">3×10</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Colgada con elevación de rodillas</div><div class="ex-note">NUEVO — usa la barra. Flexión real del recto abdominal</div></div><div class="ex-sets">3×12</div></div>
+      <div class="ex-card warn"><div><div class="ex-name">Plancha lateral</div><div class="ex-note">NUEVO — oblicuos. 30-45 seg cada lado</div></div><div class="ex-sets">3×40s</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- NUTRICIÓN PAGE -->
+<div class="page" id="page-nutricion">
+  <div class="page-header">
+    <div class="page-eyebrow">Alimentación</div>
+    <div class="page-title">NUTRICIÓN</div>
+  </div>
+
+  <div class="section-pad">
+    <div class="macro-grid">
+      <div class="macro-box kcal"><div class="macro-num">3,100</div><div class="macro-sub">Kcal / día</div></div>
+      <div class="macro-box pro"><div class="macro-num">170g</div><div class="macro-sub">Proteína</div></div>
+      <div class="macro-box carb"><div class="macro-num">400g</div><div class="macro-sub">Carbohidratos</div></div>
+      <div class="macro-box fat"><div class="macro-num">85g</div><div class="macro-sub">Grasas</div></div>
+    </div>
+
+    <div class="alert alert-good"><strong>Ya comes bien:</strong> 6 huevos + banano + maní = base sólida. Solo falta más volumen total. Tu cocina en casa con tu mamá y hermana es una ventaja enorme.</div>
+
+    <div class="sec-title">DÍAS NORMALES (Lun, Mié, Jue, Vie)</div>
+
+    <div class="meal-card">
+      <div class="meal-head"><div><div class="meal-time-badge">7:30 AM</div><div class="meal-title-text">Desayuno</div></div><div class="meal-kcal">~800</div></div>
+      <div class="meal-body">6 huevos revueltos o cocidos + 2 tortillas + 1 banano con mantequilla de maní</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-head"><div><div class="meal-time-badge">10:30 AM</div><div class="meal-title-text">Media mañana</div></div><div class="meal-kcal">~400</div></div>
+      <div class="meal-body">1 vaso leche entera + 2 rebanadas pan integral + maní o aguacate</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-head"><div><div class="meal-time-badge">1:30 PM — FIJO</div><div class="meal-title-text">Almuerzo</div></div><div class="meal-kcal">~900</div></div>
+      <div class="meal-body">200g pollo o carne + 2 tazas arroz + frijoles negros + ½ aguacate. Esta comida es el pre-entreno real.</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-head"><div><div class="meal-time-badge">3:30 PM</div><div class="meal-title-text">Pre-entreno</div></div><div class="meal-kcal">~350</div></div>
+      <div class="meal-body">1 banano + puñado de maní + 1 tortilla. Energía rápida sin llenarte antes del gym.</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-head"><div><div class="meal-time-badge">6:30 PM</div><div class="meal-title-text">Cena post-entreno ⭐</div></div><div class="meal-kcal">~650</div></div>
+      <div class="meal-body">200g pollo / atún / carne + 1½ taza arroz o pasta + vegetales + <strong>5g creatina aquí</strong>. La comida más importante del día.</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-head"><div><div class="meal-time-badge">9:00 PM</div><div class="meal-title-text">Antes de dormir</div></div><div class="meal-kcal">~250</div></div>
+      <div class="meal-body">1 vaso leche entera + 2 huevos duros. Proteína lenta para recuperación nocturna.</div>
+    </div>
+
+    <div class="special-day">
+      <div class="special-day-title">📁 MARTES (Día de oficina)</div>
+      <div class="meal-card" style="background:var(--bg);">
+        <div class="meal-head"><div><div class="meal-time-badge">7:30 AM</div><div class="meal-title-text">Desayuno rápido</div></div><div class="meal-kcal">~700</div></div>
+        <div class="meal-body">Avena con leche + banano + mantequilla maní. Menos de 5 min, sin cocinar huevos.</div>
+      </div>
+      <div class="meal-card" style="background:var(--bg);">
+        <div class="meal-head"><div><div class="meal-time-badge">10:00 AM</div><div class="meal-title-text">Oficina</div></div><div class="meal-kcal">~300</div></div>
+        <div class="meal-body">Lleva: pan integral + maní en bolsa + fruta. Sin refrigerador necesario.</div>
+      </div>
+      <div class="meal-card" style="background:var(--bg);">
+        <div class="meal-head"><div><div class="meal-time-badge">1:00 PM</div><div class="meal-title-text">Almuerzo (tupper)</div></div><div class="meal-kcal">~900</div></div>
+        <div class="meal-body">Pasta con carne como hoy — perfecto. Lleva tupper del día anterior.</div>
+      </div>
+      <div class="meal-card" style="background:var(--bg);">
+        <div class="meal-head"><div><div class="meal-time-badge">3:30 PM</div><div class="meal-title-text">Pre-entreno</div></div><div class="meal-kcal">~200</div></div>
+        <div class="meal-body">Banano en la mochila. Simple y efectivo.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn" style="margin-top:8px;"><strong>Jueves (día de correr):</strong> Agrega 250-300 kcal extra. Un banano con maní adicional es suficiente para compensar el cardio.</div>
+  </div>
+</div>
+
+<!-- HORARIOS PAGE -->
+<div class="page" id="page-horarios">
+  <div class="page-header">
+    <div class="page-eyebrow">Planificación</div>
+    <div class="page-title">HORARIOS</div>
+  </div>
+
+  <div class="section-pad">
+    <div class="sec-title">TU SEMANA REAL</div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">L</div>
+        <div class="sch-info"><div class="sch-title">LUNES — Espalda + Bíceps</div><div class="sch-sub">Home office · Gym con hermana</div></div>
+        <span class="badge b-g">GYM</span>
+      </div>
+      <div class="time-row">
+        <div class="time-block"><div class="time-val">7:30</div><div class="time-lbl">Desayuno</div></div>
+        <div class="time-block"><div class="time-val">1:30</div><div class="time-lbl">Almuerzo</div></div>
+        <div class="time-block"><div class="time-val">3:30</div><div class="time-lbl">Merienda</div></div>
+        <div class="time-block"><div class="time-val">4:00</div><div class="time-lbl">Gym</div></div>
+        <div class="time-block"><div class="time-val">6:30</div><div class="time-lbl">Cena</div></div>
+      </div>
+    </div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">M</div>
+        <div class="sch-info"><div class="sch-title">MARTES — Piernas</div><div class="sch-sub">Oficina 7-4 · Llevas a hermana · Gym 4 PM</div></div>
+        <span class="badge b-o">OFICINA</span>
+      </div>
+      <div class="time-row">
+        <div class="time-block"><div class="time-val">7:30</div><div class="time-lbl">Desayuno rápido</div></div>
+        <div class="time-block"><div class="time-val">1:30</div><div class="time-lbl">Llevas hermana</div></div>
+        <div class="time-block"><div class="time-val">2:00</div><div class="time-lbl">Almuerzo</div></div>
+        <div class="time-block"><div class="time-val">3:30</div><div class="time-lbl">Merienda</div></div>
+        <div class="time-block"><div class="time-val">4:00</div><div class="time-lbl">Gym</div></div>
+      </div>
+    </div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">X</div>
+        <div class="sch-info"><div class="sch-title">MIÉRCOLES — Pecho + Hombro + Tríceps</div><div class="sch-sub">Home office · Tu día más completo</div></div>
+        <span class="badge b-g">GYM</span>
+      </div>
+      <div class="time-row">
+        <div class="time-block"><div class="time-val">7:30</div><div class="time-lbl">Desayuno</div></div>
+        <div class="time-block"><div class="time-val">1:30</div><div class="time-lbl">Almuerzo</div></div>
+        <div class="time-block"><div class="time-val">3:30</div><div class="time-lbl">Merienda</div></div>
+        <div class="time-block"><div class="time-val">4:00</div><div class="time-lbl">Gym</div></div>
+        <div class="time-block"><div class="time-val">6:30</div><div class="time-lbl">Cena</div></div>
+      </div>
+    </div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">J</div>
+        <div class="sch-info"><div class="sch-title">JUEVES — Cardio + Rehab</div><div class="sch-sub">Home office · Sin gym · Correr tarde</div></div>
+        <span class="badge b-p">CARDIO</span>
+      </div>
+      <div class="time-row">
+        <div class="time-block"><div class="time-val">7:30</div><div class="time-lbl">Desayuno</div></div>
+        <div class="time-block"><div class="time-val">1:30</div><div class="time-lbl">Almuerzo</div></div>
+        <div class="time-block"><div class="time-val">+300</div><div class="time-lbl">Kcal extra</div></div>
+        <div class="time-block"><div class="time-val">5:00</div><div class="time-lbl">Correr</div></div>
+        <div class="time-block"><div class="time-val">6:30</div><div class="time-lbl">Cena</div></div>
+      </div>
+    </div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">V</div>
+        <div class="sch-info"><div class="sch-title">VIERNES — Espalda Alta + Brazos</div><div class="sch-sub">Home office · Gym con hermana</div></div>
+        <span class="badge b-b">GYM</span>
+      </div>
+      <div class="time-row">
+        <div class="time-block"><div class="time-val">7:30</div><div class="time-lbl">Desayuno</div></div>
+        <div class="time-block"><div class="time-val">1:30</div><div class="time-lbl">Almuerzo</div></div>
+        <div class="time-block"><div class="time-val">3:30</div><div class="time-lbl">Merienda</div></div>
+        <div class="time-block"><div class="time-val">4:00</div><div class="time-lbl">Gym</div></div>
+        <div class="time-block"><div class="time-val">6:30</div><div class="time-lbl">Cena</div></div>
+      </div>
+    </div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">S</div>
+        <div class="sch-info"><div class="sch-title">SÁBADO — Universidad</div><div class="sch-sub">Descanso total · Come bien · Recupera</div></div>
+        <span class="badge b-muted">REST</span>
+      </div>
+    </div>
+
+    <div class="schedule-day">
+      <div class="schedule-head">
+        <div class="sch-day-num">D</div>
+        <div class="sch-info"><div class="sch-title">DOMINGO — Pierna + Core</div><div class="sch-sub">Con papá · Sin hora fija</div></div>
+        <span class="badge b-p">GYM</span>
+      </div>
+      <div class="time-row">
+        <div class="time-block"><div class="time-val">—</div><div class="time-lbl">Sin hora fija</div></div>
+        <div class="time-block"><div class="time-val">Pie</div><div class="time-lbl">Ligero</div></div>
+        <div class="time-block"><div class="time-val">Core</div><div class="time-lbl">Completo</div></div>
+        <div class="time-block"><div class="time-val">Con</div><div class="time-lbl">Papá</div></div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-top:24px;">CREATINA</div>
+    <div class="card">
+      <div class="card-row">
+        <div><div class="card-label">Dosis diaria</div><div class="card-val green">5g</div></div>
+        <div><div class="card-label">Cuándo</div><div style="font-size:14px;color:var(--text);margin-top:4px;">Post-entreno<br>con la cena</div></div>
+        <div><div class="card-label">Agua mín.</div><div class="card-val blue">3L</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted);">Todos los días — incluso sin entrenar. Monohidrato micronizado cualquier marca.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPS PAGE -->
+<div class="page" id="page-tips">
+  <div class="page-header">
+    <div class="page-eyebrow">Mentalidad</div>
+    <div class="page-title">CLAVES</div>
+  </div>
+
+  <div class="section-pad">
+    <div class="tip-card"><div class="tip-icon">📊</div><div><div class="tip-title-t">Pésate cada lunes</div><div class="tip-body">En ayunas, mismo horario. Meta: +0.5 a 1 kg por mes. Si no subes en 2 semanas, come 200 kcal más ese día.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">📈</div><div><div class="tip-title-t">Progresión constante</div><div class="tip-body">Cada semana intenta 1 rep más o 2.5 lbs más de lastre. Sin progresión no hay músculo nuevo. El cuerpo se adapta rápido.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">😴</div><div><div class="tip-title-t">8 horas de sueño</div><div class="tip-body">El 80% de la hormona de crecimiento se libera durmiendo. Sin sueño el gym no sirve de nada.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">🫀</div><div><div class="tip-title-t">Rehab hombro diario</div><div class="tip-body">Face pulls y rotaciones con banda TODOS los días de gym. 5 minutos salvan meses de lesión. No es opcional.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">🏃</div><div><div class="tip-title-t">Correr sin perder músculo</div><div class="tip-body">Máx 2-3 veces/semana, 25-30 min, ritmo conversacional. Compensar con 250-300 kcal extra ese día. Jueves y opcional domingo.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">🍳</div><div><div class="tip-title-t">Tu cocina es tu ventaja</div><div class="tip-body">Tu mamá y hermana cocinan en casa — arroz, frijoles, huevos, pollo. Eso es todo lo que necesitas. Solo come más volumen.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">💪</div><div><div class="tip-title-t">Lastre inteligente</div><div class="tip-body">En fondos (meta 90 lbs) y dominadas, sube peso SOLO cuando completes todas las reps perfectas. Forma primero, siempre.</div></div></div>
+    <div class="tip-card"><div class="tip-icon">🎯</div><div><div class="tip-title-t">Meta realista</div><div class="tip-body">8-12 kg de músculo limpio en 12-18 meses con constancia. No inflado, no delgado — atlético y funcional.</div></div></div>
+
+    <div class="alert alert-warn" style="margin-top:8px;"><strong>Los 3 cambios de esta semana:</strong> (1) Quita el pull-over ya. (2) Agrega femoral y peso muerto rumano con mancuernas el martes. (3) Desayuno fijo antes de las 8 AM todos los días.</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showPage('home', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('rutina', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v16M18 4v16M6 12h12"/></svg>
+    <span class="nav-label">Rutina</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('nutricion', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/></svg>
+    <span class="nav-label">Nutrición</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('horarios', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span class="nav-label">Horarios</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('tips', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span class="nav-label">Claves</span>
+  </button>
+</nav>
+
+<script>
+const DAYS = [
+  { name: 'ESPALDA + BÍCEPS', focus: 'Pull day · Dominadas con lastre', badge: 'GYM', color: 'var(--accent)' },
+  { name: 'PIERNAS', focus: 'Oficina · Llevas a tu hermana a las 1:30', badge: 'GYM', color: 'var(--orange)' },
+  { name: 'PECHO + HOMBRO', focus: 'Tu día más completo', badge: 'GYM', color: 'var(--accent)' },
+  { name: 'CARDIO + REHAB', focus: 'Correr 25-30 min · Sin gym', badge: 'CARDIO', color: 'var(--purple)' },
+  { name: 'ESPALDA + BRAZOS', focus: '2do estímulo espalda · Brazos completos', badge: 'GYM', color: 'var(--blue)' },
+  { name: 'UNIVERSIDAD', focus: 'Descanso total · Come bien', badge: 'REST', color: 'var(--muted)' },
+  { name: 'PIERNA + CORE', focus: 'Con papá · Sin hora fija', badge: 'GYM', color: 'var(--purple)' },
+];
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showDay(idx) {
+  document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.day-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+function setTodayCard() {
+  const day = new Date().getDay(); // 0=dom, 1=lun, ..., 6=sáb
+  const map = [6, 0, 1, 2, 3, 4, 5]; // sunday=6(domingo), monday=0(lunes)...
+  const d = DAYS[map[day]];
+  const card = document.getElementById('todayCard');
+  card.innerHTML = `
+    <div class="today-card">
+      <div class="today-day">HOY · ${['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'][day]}</div>
+      <div class="today-title" style="color:${d.color}">${d.name}</div>
+      <div class="today-focus">${d.focus}</div>
+      <div style="margin-top:12px;">
+        <span class="badge" style="background:rgba(200,241,53,0.1);color:var(--accent);border:1px solid rgba(200,241,53,0.2);">${d.badge}</span>
+      </div>
+    </div>`;
+}
+
+setTodayCard();
+</script>
+</body>
+</html>
