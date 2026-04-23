@@ -226,6 +226,31 @@ body {
 }
 .install-banner-text { flex: 1; font-size: 13px; color: #bdd98a; line-height: 1.5; }
 .install-banner-text strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--accent); }
+/* --- CONFIGURACIÓN ESPECIAL PARA EL WIDGET --- */
+@media (max-height: 500px) {
+    /* Esconde el menú de abajo, el título y los banners de instalación */
+    nav, .header, .tabs, .install-banner { 
+        display: none !important; 
+    }
+    
+    /* Elimina espacios extra para que el contenido suba */
+    body { 
+        padding: 0 !important; 
+        background: #0a0a0a; 
+    }
+
+    /* Asegura que la tarjeta de HOY sea lo primero que se vea */
+    .active { 
+        margin-top: 0 !important; 
+    }
+
+    /* Ajusta la tarjeta de hoy para que llene el cuadrito del iPhone */
+    .today-card {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0;
+    }
+} 
 </style>
 </head>
 <body>
