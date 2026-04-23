@@ -692,12 +692,27 @@ const DAYS = [
 ];
 
 function showPage(id, btn) {
+  // 1. Ocultar todas las páginas
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // 2. Quitar el estado activo de todos los botones
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  btn.classList.add('active');
+  
+  // 3. Mostrar la página seleccionada
+  const targetPage = document.getElementById('page-' + id);
+  if (targetPage) targetPage.classList.add('active');
+  
+  // 4. Si venimos de un clic (hay botón), marcarlo como activo
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    // Si no hay botón (carga inicial), buscarlo por el ID
+    const autoBtn = document.querySelector(`button[onclick*="${id}"]`);
+    if (autoBtn) autoBtn.classList.add('active');
+  }
+  
   window.scrollTo(0, 0);
 }
+
 
 function showDay(idx) {
   document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
@@ -709,6 +724,7 @@ function setTodayCard() {
   const map = [6, 0, 1, 2, 3, 4, 5]; // sunday=6(domingo), monday=0(lunes)...
   const d = DAYS[map[day]];
   const card = document.getElementById('todayCard');
+  
   card.innerHTML = `
     <div class="today-card">
       <div class="today-day">HOY · ${['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'][day]}</div>
@@ -716,4 +732,23 @@ function setTodayCard() {
       <div class="today-focus">${d.focus}</div>
       <div style="margin-top:12px;">
         <span class="badge" style="background:rgba(200,241,53,0.1);color:var(--accent);border:1px solid rgba(200,241,53,0.2);">${d.badge}</span>
-c
+      </div>
+    </div>`;
+}
+
+// --- EJECUCIÓN INICIAL ---
+setTodayCard();
+
+// Registro de modo Offline (Service Worker)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
+  });
+}
+
+// Forzar que la app inicie en la pestaña de inicio
+showPage('home'); 
+
+</script>
+</body>
+</html>
