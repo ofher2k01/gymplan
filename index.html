@@ -226,12 +226,6 @@ body {
 }
 .install-banner-text { flex: 1; font-size: 13px; color: #bdd98a; line-height: 1.5; }
 .install-banner-text strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--accent); }
-/* Esto quita el banner de "Guardar en tu celular" para siempre */
-.install-banner {
-    display: none !important;
-}
-
-/* Super-Optimizador para Widget (Solo se activa en miniatura) */
 @media (max-height: 250px) {
     nav, .header, .tabs, .section-title { 
         display: none !important; 
@@ -239,16 +233,10 @@ body {
     body { 
         padding: 0 !important; 
         background: #0a0a0a;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
     }
-    #page-hoy { display: block !important; width: 100%; }
-    .today-card {
-        margin: 0 !important;
-        border: none !important;
-        background: transparent !important;
+    /* Solo ocultamos las otras páginas si el espacio es de widget */
+    .page:not(.active) {
+        display: none !important;
     }
 }
   
