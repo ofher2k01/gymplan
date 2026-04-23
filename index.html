@@ -226,31 +226,33 @@ body {
 }
 .install-banner-text { flex: 1; font-size: 13px; color: #bdd98a; line-height: 1.5; }
 .install-banner-text strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--accent); }
-/* --- CONFIGURACIÓN ESPECIAL PARA EL WIDGET --- */
+/* Super-Optimizador para Widget */
 @media (max-height: 500px) {
-    /* Esconde el menú de abajo, el título y los banners de instalación */
-    nav, .header, .tabs, .install-banner { 
+    nav, .header, .tabs, .install-banner, .section-title { 
         display: none !important; 
     }
-    
-    /* Elimina espacios extra para que el contenido suba */
     body { 
         padding: 0 !important; 
-        background: #0a0a0a; 
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
     }
-
-    /* Asegura que la tarjeta de HOY sea lo primero que se vea */
-    .active { 
-        margin-top: 0 !important; 
-    }
-
-    /* Ajusta la tarjeta de hoy para que llene el cuadrito del iPhone */
+    #page-hoy { display: block !important; width: 100%; }
     .today-card {
         margin: 0 !important;
         border: none !important;
-        border-radius: 0;
+        background: transparent !important;
+        width: 100%;
+        text-align: center;
     }
-} 
+    .today-day { font-size: 1.2rem !important; }
+    .today-name { font-size: 2.5rem !important; color: var(--accent); }
+    .today-focus { font-size: 1rem !important; }
+}
+  
 </style>
 </head>
 <body>
